@@ -4,14 +4,15 @@ import Resolvers from "./resolvers";
 import Schema from "./schema";
 
 // GraphQL init
-const executableSchema = makeExecutableSchema({
-	typeDefs: Schema,
-	resolvers: Resolvers
-});
-
-const server = new ApolloServer({
-	schema: executableSchema,
-	context: ({ req }) => req
-});
-
-export default server;
+export default utils => {
+	const executableSchema = makeExecutableSchema({
+		typeDefs: Schema,
+		// scope  of the Resolvers is the utils obj (the DAO effectively)
+		resolvers: Resolvers.call(utils)
+	});
+	const server = new ApolloServer({
+		schema: executableSchema,
+		context: ({ req }) => req
+	});
+	return server;
+};

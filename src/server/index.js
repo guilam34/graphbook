@@ -3,7 +3,13 @@ import path from "path";
 import helmet from "helmet";
 import cors from "cors";
 import compress from "compression";
-import services from "./services";
+import db from "./database";
+const utils = {
+	db
+};
+
+import servicesLoader from "./services";
+const services = servicesLoader(utils);
 
 const root = path.join(__dirname, "../../");
 const app = express();
@@ -28,7 +34,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(compress());
 
 // enable CORS
-app.use(cors());	
+app.use(cors());
 
 const serviceNames = Object.keys(services);
 for (let i = 0; i < serviceNames.length; i += 1) {
