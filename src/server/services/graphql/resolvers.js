@@ -52,6 +52,35 @@ export default function resolver() {
 						]
 					});
 				});
+			},
+			chat(root, { chatId }, context) {
+				return Chat.findByPk(chatId, {
+					include: [
+						{
+							model: User,
+							required: true
+						},
+						{
+							model: Message
+						}
+					]
+				});
+			},
+			postsFeed(root, { page, limit }, context) {
+				var skip = 0;
+				if (page && limit) {
+					skip = page * limit;
+				}
+				var query = {
+					order: [["createdAt", "DESC"]],
+					offset: skip
+				};
+				if (limit) {
+					query.limit = limit;
+				}
+				return {
+					posts: Post.findAll(query)
+				};
 			}
 		},
 		RootMutation: {
@@ -123,6 +152,13 @@ export default function resolver() {
 			},
 			users(chat, args, context) {
 				return chat.getUsers();
+			},
+			lastMessage(chat, args, context) {
+				return chat
+					.getMessages({ limit: 1, order: [["id", "DESC"]] })
+					.then(message => {
+						return message[0];
+					});
 			}
 		}
 	};
