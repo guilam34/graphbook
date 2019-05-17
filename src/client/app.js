@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 import Feed from "./Feed";
-import Chats from './Chats';
+import Chats from "./Chats";
+import SearchBar from "./components/bar";
+import { UserProvider } from './components/context/user';
+
+import "./components/fontawesome";
 import "../../assets/css/style.css";
 export default class App extends Component {
 	render() {
@@ -15,8 +19,11 @@ export default class App extends Component {
                        friends on Graphbook"
 					/>
 				</Helmet>
-				<Feed />
-				<Chats/>
+				<UserProvider>
+					<SearchBar/>
+					<Feed />
+					<Chats />
+				</UserProvider>
 			</div>
 		);
 	}

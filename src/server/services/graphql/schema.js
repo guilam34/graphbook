@@ -1,4 +1,10 @@
 const typeDefinitions = `
+type UsersSearch {
+     users: [User]
+}
+  type Response {
+    success: Boolean
+ }
  type User {
      id: Int
      avatar: String
@@ -29,6 +35,7 @@ const typeDefinitions = `
      chats: [Chat]
      chat(chatId: Int): Chat
      postsFeed(page: Int, limit: Int): PostFeed
+        usersSearch(page: Int, limit: Int, text: String!): UsersSearch
  }
  input PostInput {
    text: String!
@@ -54,6 +61,13 @@ const typeDefinitions = `
   addMessage (
     message: MessageInput!
   ): Message
+  updatePost (
+      post: PostInput!
+      postId: Int!
+  ): Post
+  deletePost (
+    postId: Int!
+  ): Response
  }
  schema {
    query: RootQuery

@@ -8,6 +8,8 @@ const utils = {
 	db
 };
 
+//set NODE_ENV=development
+
 import servicesLoader from "./services";
 const services = servicesLoader(utils);
 
@@ -15,20 +17,18 @@ const root = path.join(__dirname, "../../");
 const app = express();
 
 // config headers
-if (process.env.NODE_ENV === "development") {
-	app.use(helmet());
-	app.use(
-		helmet.contentSecurityPolicy({
-			directives: {
-				defaultSrc: ["'self'"],
-				scriptSrc: ["'self'", "'unsafe-inline'"],
-				styleSrc: ["'self'", "'unsafe-inline'"],
-				imgSrc: ["'self'", "data:", "*.amazonaws.com"]
-			}
-		})
-	);
-	app.use(helmet.referrerPolicy({ policy: "same-origin" }));
-}
+app.use(helmet());
+app.use(
+	helmet.contentSecurityPolicy({
+		directives: {
+			defaultSrc: ["'self'"],
+			scriptSrc: ["'self'", "'unsafe-inline'"],
+			styleSrc: ["'self'", "'unsafe-inline'"],
+			imgSrc: ["'self'", "data:", "*.amazonaws.com"]
+		}
+	})
+);
+app.use(helmet.referrerPolicy({ policy: "same-origin" }));
 
 // compress responses
 app.use(compress());
