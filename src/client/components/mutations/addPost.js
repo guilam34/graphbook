@@ -52,6 +52,7 @@ export default class AddPostMutation extends Component {
 					if (typeof variables !== typeof undefined) {
 						query.variables = variables;
 					}
+					// This is writing to the Apollo store so that when it tries to fetch more for a query, the "previous results" will contain the new post
 					const data = store.readQuery(query);
 					data.postsFeed.posts.unshift(addPost);
 					store.writeQuery({ ...query, data });
@@ -74,6 +75,7 @@ export default class AddPostMutation extends Component {
 				{/* This isn't a subscription. It's just faking it when you add a post */}
 				{addPost =>
 					React.Children.map(children, function(child) {
+						// ES6 map declaration
 						return React.cloneElement(child, {
 							addPost,
 							postContent,

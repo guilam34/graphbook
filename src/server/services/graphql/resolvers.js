@@ -1,6 +1,14 @@
 import logger from "../../helpers/logger";
+import bcrypt from "bcrypt";
+import JWT from "jsonwebtoken";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
+
+// saving secret in file, yes very safe
+// export JWT_SECRET=awv4BcIzsRysXkhoSAb8t8lNENgXSqBruVlLwd45kGdYjeJHLap9LUJ1t9DTdw36DvLcWs3qEkPyCY6vOyNljlh2Er952h2gDzYwG82rs1qfTzdVIg89KTaQ4SWI1YGY
+
+const JWT_SECRET =
+	"awv4BcIzsRysXkhoSAb8t8lNENgXSqBruVlLwd45kGdYjeJHLap9LUJ1t9DTdw36DvLcWs3qEkPyCY6vOyNljlh2Er952h2gDzYwG82rs1qfTzdVIg89KTaQ4SWI1YGY";
 
 const resolvers = {
 	RootQuery: {
@@ -205,11 +213,63 @@ export default function resolver() {
 						});
 					}
 				);
+			},
+			login(root, { email, password }, context) {
+				return User.findAll({
+					where: {
+						email
+					},
+					raw: true
+				}).then(async users => {
+					if ((users.length = 1)) {
+						const user = users[0];
+						const passwordValid = await bcrypt.compare(password, user.password);
+						if (!passwordValid) {
+							throw new Error("Password does not match");
+						}
+						const token = JWT.sign({ email, id: user.id }, JWT_SECRET, {
+							expiresIn: "1d"
+						});
+						return {
+							token
+						};
+					} else {
+						throw new Error("User not found");
+					}
+				});
+			},
+			signup(root, { email, password, username }, context) {
+				return User.findAll({
+					where: {
+						[Op.or]: [{ email }, { username }]
+					},
+					raw: true
+				}).then(async users => {
+					if (users.length) {
+						throw new Error("User already exists");
+					} else {
+						return bcrypt.hash(password, 10).then(hash => {
+							return User.create({
+								email,
+								password: hash,
+								username,
+								activated: 1
+							}).then(newUser => {
+								const token = JWT.sign({ email, id: newUser.id }, JWT_SECRET, {
+									expiresIn: "1d"
+								});
+								return {
+									token
+								};
+							});
+						});
+					}
+				});
 			}
 		},
 
 		Post: {
-			// rest of Post information is already available in Post so we don't need resolvers for the other fields
+			// rest of Post information is already available in Post with ORM magic in models/post.js so we don't need resolvers for the other fields
 			user(post, args, context) {
 				return post.getUser();
 			}

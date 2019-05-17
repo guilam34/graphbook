@@ -162,6 +162,7 @@ export default class Chats extends Component {
 							variables={{ chatId }}
 						>
 							{({ loading, error, data }) => {
+								console.log(data);
 								if (loading) return <Loading/>;
 								if (error) return <Error><p>{error.message}</p></Error>;
 								const { chat } = data;

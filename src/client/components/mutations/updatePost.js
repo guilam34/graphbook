@@ -48,6 +48,7 @@ export default class UpdatePostMutation extends Component {
 					if (typeof variables !== typeof undefined) {
 						query.variables = variables;
 					}
+					// This is writing to the Apollo store so that when it tries to fetch more for a query, the "previous results" will contain the new post
 					const data = store.readQuery(query);
 					for (var i = 0; i < data.postsFeed.posts.length; i++) {
 						if (data.postsFeed.posts[i].id === postId) {
@@ -68,6 +69,7 @@ export default class UpdatePostMutation extends Component {
 			>
 				{updatePost =>
 					React.Children.map(children, function(child) {
+						// ES6 map declaration
 						return React.cloneElement(child, {
 							updatePost,
 							postContent,

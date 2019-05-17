@@ -3,11 +3,24 @@ import { Helmet } from "react-helmet";
 import Feed from "./Feed";
 import Chats from "./Chats";
 import SearchBar from "./components/bar";
-import { UserProvider } from './components/context/user';
+import { UserProvider } from "./components/context/user";
+import LoginRegisterForm from "./components/loginregister";
 
 import "./components/fontawesome";
 import "../../assets/css/style.css";
 export default class App extends Component {
+	state = {
+		loggedIn: false
+	};
+	componentWillMount() {
+		const token = localStorage.getItem("jwt");
+		if (token) {
+			this.setState({ loggedIn: true });
+		}
+	}
+	changeLoginState = loggedIn => {
+		this.setState({ loggedIn });
+	};
 	render() {
 		return (
 			<div className="container">
@@ -20,9 +33,15 @@ export default class App extends Component {
 					/>
 				</Helmet>
 				<UserProvider>
-					<SearchBar/>
-					<Feed />
-					<Chats />
+					{this.state.loggedIn ? (
+						<div>
+							<SearchBar />
+							<Feed />
+							<Chats />
+						</div>
+					) : (
+						<LoginRegisterForm changeLoginState={this.changeLoginState} />
+					)}
 				</UserProvider>
 			</div>
 		);

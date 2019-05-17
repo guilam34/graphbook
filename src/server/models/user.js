@@ -4,13 +4,15 @@ module.exports = (sequelize, DataTypes) => {
 		"User",
 		{
 			avatar: DataTypes.STRING,
-			username: DataTypes.STRING
+			username: DataTypes.STRING,
+			email: DataTypes.STRING,
+			password: DataTypes.STRING
 		},
 		{}
 	);
 	User.associate = function(models) {
 		User.hasMany(models.Post);
-		User.belongsToMany(models.Chat, { through: 'user_chats' });
+		User.belongsToMany(models.Chat, { through: "user_chats" });
 	};
 	return User;
 };

@@ -1,7 +1,10 @@
 const typeDefinitions = `
-type UsersSearch {
+  type Auth {
+     token: String
+  }
+  type UsersSearch {
      users: [User]
-}
+  }
   type Response {
     success: Boolean
  }
@@ -68,6 +71,15 @@ type UsersSearch {
   deletePost (
     postId: Int!
   ): Response
+  login (
+     email: String!
+     password: String!
+  ): Auth
+  signup (
+     username: String!
+     email: String!
+     password: String!
+  ): Auth
  }
  schema {
    query: RootQuery
