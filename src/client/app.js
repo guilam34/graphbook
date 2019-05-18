@@ -2,16 +2,28 @@ import React, { Component } from "react";
 import { Helmet } from "react-helmet";
 import Feed from "./Feed";
 import Chats from "./Chats";
-import SearchBar from "./components/bar";
-import { UserProvider } from "./components/context/user";
+import Bar from "./components/bar";
 import LoginRegisterForm from "./components/loginregister";
+import CurrentUserQuery from "./components/queries/currentUser";
+import { withApollo } from 'react-apollo';
 
 import "./components/fontawesome";
 import "../../assets/css/style.css";
-export default class App extends Component {
+class App extends Component {
 	state = {
 		loggedIn: false
 	};
+
+	constructor(props) {
+		super(props);
+		this.unsubscribe = props.client.onResetStore(() =>
+			this.changeLoginState(false)
+		);
+	}
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
 	componentWillMount() {
 		const token = localStorage.getItem("jwt");
 		if (token) {
@@ -32,18 +44,18 @@ export default class App extends Component {
                        friends on Graphbook"
 					/>
 				</Helmet>
-				<UserProvider>
-					{this.state.loggedIn ? (
-						<div>
-							<SearchBar />
-							<Feed />
-							<Chats />
-						</div>
-					) : (
-						<LoginRegisterForm changeLoginState={this.changeLoginState} />
-					)}
-				</UserProvider>
+				{this.state.loggedIn ? (
+					<CurrentUserQuery>
+						<Bar changeLoginState={this.changeLoginState} />
+						<Feed />
+						<Chats />
+					</CurrentUserQuery>
+				) : (
+					<LoginRegisterForm changeLoginState={this.changeLoginState} />
+				)}
 			</div>
 		);
 	}
 }
+
+export default withApollo(App);

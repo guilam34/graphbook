@@ -39,28 +39,17 @@ export default function resolver() {
 				return Post.findAll({ order: [["createdAt", "DESC"]] });
 			},
 			chats(root, args, context) {
-				return User.findAll().then(users => {
-					if (!users.length) {
-						return [];
-					}
-					const usersRow = users[0];
-
-					// return info on the entire items even if the findAll params filter specific values (e.g. userId = 3)
-					return Chat.findAll({
-						include: [
-							{
-								model: User,
-								required: true,
-								// filter for Chats were the given user is part of and ONLY those chats
-								through: { where: { userId: usersRow.id } }
-							},
-							{
-								// no required -> more or less does LEFT OUTER JOIN
-								// call Model resolvers
-								model: Message
-							}
-						]
-					});
+				return Chat.findAll({
+					include: [
+						{
+							model: User,
+							required: true,
+							through: { where: { userId: context.user.id } }
+						},
+						{
+							model: Message
+						}
+					]
 				});
 			},
 			chat(root, { chatId }, context) {
@@ -117,6 +106,9 @@ export default function resolver() {
 				return {
 					users: User.findAll(query)
 				};
+			},
+			currentUser(root, args, context) {
+				return context.user;
 			}
 		},
 		RootMutation: {
@@ -125,14 +117,11 @@ export default function resolver() {
 					level: "info",
 					message: "Post was created"
 				});
-				return User.findAll().then(users => {
-					const usersRow = users[0];
-					return Post.create({
-						...post
-					}).then(newPost => {
-						return Promise.all([newPost.setUser(usersRow.id)]).then(() => {
-							return newPost;
-						});
+				return Post.create({
+					...post
+				}).then(newPost => {
+					return Promise.all([newPost.setUser(context.user.id)]).then(() => {
+						return newPost;
 					});
 				});
 			},
@@ -152,17 +141,14 @@ export default function resolver() {
 					level: "info",
 					message: "Message was created"
 				});
-				return User.findAll().then(users => {
-					const usersRow = users[0];
-					return Message.create({
-						...message
-					}).then(newMessage => {
-						return Promise.all([
-							newMessage.setUser(usersRow.id),
-							newMessage.setChat(message.chatId)
-						]).then(() => {
-							return newMessage;
-						});
+				return Message.create({
+					...message
+				}).then(newMessage => {
+					return Promise.all([
+						newMessage.setUser(context.user.id),
+						newMessage.setChat(message.chatId)
+					]).then(() => {
+						return newMessage;
 					});
 				});
 			},

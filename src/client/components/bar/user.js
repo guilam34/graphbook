@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 export default class UserBar extends Component {
 	render() {
-		const { user } = this.props;
+		const { currentUser: user } = this.props;
 		if (!user) return null;
 		return (
 			<div className="user">

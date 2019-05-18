@@ -1,28 +1,30 @@
-import React, { Component, createContext } from "react";
-const { Provider, Consumer } = createContext();
+import React, { Component } from "react";
+import { ApolloConsumer } from "react-apollo";
+import gql from "graphql-tag";
 
-export class UserProvider extends Component {
-	render() {
-		const { children } = this.props;
-		const user = {
-			username: "Test User",
-			avatar: "/uploads/avatar1.png"
-		};
-		return <Provider value={user}>{children}</Provider>;
+const GET_CURRENT_USER = gql`
+	query currentUser {
+		currentUser {
+			id
+			username
+			avatar
+		}
 	}
-}
+`;
 
 export class UserConsumer extends Component {
 	render() {
 		const { children } = this.props;
 		return (
-			<Consumer>
-				{user =>
-					React.Children.map(children, function(child) {
-						return React.cloneElement(child, { user });
-					})
-				}
-			</Consumer>
+			<ApolloConsumer>
+				{client => {
+					// extract user from Apollo cache
+					const { currentUser } = client.readQuery({ query: GET_CURRENT_USER });
+					return React.Children.map(children, function(child) {
+						return React.cloneElement(child, { currentUser });
+					});
+				}}
+			</ApolloConsumer>
 		);
 	}
 }
