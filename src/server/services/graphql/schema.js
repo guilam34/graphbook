@@ -1,5 +1,11 @@
 const typeDefinitions = `
   directive @auth on QUERY | FIELD_DEFINITION | FIELD
+  scalar Upload
+
+  type File {
+    filename: String!
+    url: String!
+  }
 
   type Auth {
      token: String
@@ -83,6 +89,9 @@ const typeDefinitions = `
      email: String!
      password: String!
   ): Auth
+  uploadAvatar (
+     file: Upload!
+  ): File @auth
  }
  schema {
    query: RootQuery

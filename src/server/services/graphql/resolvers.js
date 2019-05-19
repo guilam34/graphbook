@@ -4,6 +4,12 @@ import JWT from "jsonwebtoken";
 import Sequelize from "sequelize";
 const Op = Sequelize.Op;
 
+import aws from "aws-sdk";
+const s3 = new aws.S3({
+	signatureVersion: "v4",
+	region: "us-west-1"
+});
+
 // saving secret in file, yes very safe
 // export JWT_SECRET=awv4BcIzsRysXkhoSAb8t8lNENgXSqBruVlLwd45kGdYjeJHLap9LUJ1t9DTdw36DvLcWs3qEkPyCY6vOyNljlh2Er952h2gDzYwG82rs1qfTzdVIg89KTaQ4SWI1YGY
 
@@ -250,6 +256,32 @@ export default function resolver() {
 							});
 						});
 					}
+				});
+			},
+			async uploadAvatar(root, { file }, context) {
+				const { stream, filename, mimetype, encoding } = await file;
+				const bucket = "apollobook-glam";
+				const params = {
+					Bucket: bucket,
+					Key: context.user.id + "/" + filename,
+					ACL: "public-read",
+					Body: stream
+				};
+				const response = await s3.upload(params).promise();
+				return User.update(
+					{
+						avatar: response.Location
+					},
+					{
+						where: {
+							id: context.user.id
+						}
+					}
+				).then(() => {
+					return {
+						filename: filename,
+						url: response.Location
+					};
 				});
 			}
 		},

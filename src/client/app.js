@@ -9,6 +9,7 @@ import { withApollo } from 'react-apollo';
 
 import "./components/fontawesome";
 import "../../assets/css/style.css";
+import '@synapsestudios/react-drop-n-crop/lib/react-drop-n-crop.min.css';
 class App extends Component {
 	state = {
 		loggedIn: false
