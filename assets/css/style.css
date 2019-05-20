@@ -417,3 +417,51 @@ form [type=submit] {
     float: right;
     margin-top: 10px;
 }
+
+button.cancelUpload {
+    border: none;
+    background-color: #6ca6fd;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    float: left;
+    margin-top: 10px;
+}
+
+button.uploadAvatar {
+    border: none;
+    background-color: #6ca6fd;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    float: right;
+    margin-top: 10px;
+}
+
+.post .header a > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.profileHeader {
+    margin-top: 60px;
+}
+
+.profileHeader .information {
+    width: calc(100% - 270px);
+    vertical-align: middle;
+    display: inline-block;
+    padding-left: 20px;
+}
+
+.profileHeader .avatar {
+    display: inline-block;
+    width: 250px;
+    vertical-align: middle;
+}
+
+.profileHeader .avatar img {
+    width: 100%;
+}

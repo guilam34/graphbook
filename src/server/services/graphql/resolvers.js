@@ -71,7 +71,7 @@ export default function resolver() {
 					]
 				});
 			},
-			postsFeed(root, { page, limit }, context) {
+			postsFeed(root, { page, limit, username }, context) {
 				var skip = 0;
 				if (page && limit) {
 					skip = page * limit;
@@ -82,6 +82,10 @@ export default function resolver() {
 				};
 				if (limit) {
 					query.limit = limit;
+				}
+				if (typeof username !== typeof undefined) {
+					query.include = [{ model: User }]; //"JOIN on this model"
+					query.where = { "$User.username$": username };
 				}
 				return {
 					posts: Post.findAll(query)
@@ -115,6 +119,13 @@ export default function resolver() {
 			},
 			currentUser(root, args, context) {
 				return context.user;
+			},
+			user(root, { username }, context) {
+				return User.findOne({
+					where: {
+						username: username
+					}
+				});
 			}
 		},
 		RootMutation: {
