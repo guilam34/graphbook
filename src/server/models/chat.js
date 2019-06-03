@@ -1,13 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Chat = sequelize.define('Chat', {
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    email: DataTypes.STRING
-  }, {});
+  var Chat = sequelize.define('Chat', {}, {});
   Chat.associate = function(models) {
-  	Chat.belongsToMany(models.User, { through: 'user_chats' });
-  	Chat.hasMany(models.Message);
+    Chat.belongsToMany(models.User, { through: 'users_chats' });
+    Chat.hasMany(models.Message);
   };
   return Chat;
 };

@@ -1,29 +1,22 @@
-import Sequelize from "sequelize";
-if (process.env.NODE_ENV === "development") {
-  require("babel-plugin-require-context-hook/register")();
+import Sequelize from 'sequelize';
+if (process.env.NODE_ENV === 'development') {
+  require('babel-plugin-require-context-hook/register')()
 }
-export default sequelize => {
+
+export default (sequelize) => {
   let db = {};
-  const context = require.context(
-    ".",
-    true,
-    /^\.\/(?!index\.js).*\.js$/,
-    "sync"
-  );
-  context
-    .keys()
-    .map(context)
-    .forEach(module => {
-      // import Sequelize models
-      // first sequelize is Sequelize config, second is the module itself
-      const model = module(sequelize, Sequelize);
-      db[model.name] = model;
-    });
-  Object.keys(db).forEach(modelName => {
-    // if the model has associate method, establish relations between it and other models
+
+  const context = require.context('.', true, /^\.\/(?!index\.js).*\.js$/, 'sync')
+  context.keys().map(context).forEach(module => {
+    const model = module(sequelize, Sequelize);
+    db[model.name] = model;
+  });
+
+  Object.keys(db).forEach((modelName) => {
     if (db[modelName].associate) {
       db[modelName].associate(db);
     }
   });
+
   return db;
 };

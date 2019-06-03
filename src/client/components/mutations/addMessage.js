@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -23,8 +23,8 @@ const GET_CHAT = gql`
 `;
 
 const ADD_MESSAGE = gql`
-    mutation addMessage($message: MessageInput!) {
-        addMessage(message: $message) {
+    mutation addMessage($message : MessageInput!) {
+        addMessage(message : $message) {
             id
             text
             user {
@@ -39,25 +39,17 @@ export default class AddMessageMutation extends Component {
         const { children, chat } = this.props;
         return (
             <Mutation
-                update={(store, { data: { addMessage } }) => {
-                    const data = store.readQuery({
-                        query: GET_CHAT,
-                        variables: { chatId: chat.id }
-                    });
+                update = {(store, { data: { addMessage } }) => {
+                    const data = store.readQuery({ query: GET_CHAT, variables: { chatId: chat.id } });
                     data.chat.messages.push(addMessage);
-                    store.writeQuery({
-                        query: GET_CHAT,
-                        variables: { chatId: chat.id },
-                        data
-                    });
+                    store.writeQuery({ query: GET_CHAT, variables: { chatId: chat.id }, data });
                 }}
-                mutation={ADD_MESSAGE}
-            >
-                {addMessage =>
-                    React.Children.map(children, function(child) {
-                        return React.cloneElement(child, { addMessage });
-                    })
-                }
+                mutation={ADD_MESSAGE}>
+                    {addMessage => (
+                        React.Children.map(children, function(child){
+                            return React.cloneElement(child, { addMessage });
+                        })
+                    )}
             </Mutation>
         );
     }

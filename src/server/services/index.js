@@ -1,5 +1,7 @@
-import graphql from "./graphql";
-export default utils => ({
-	graphql: graphql(utils)
-});
+import graphql from './graphql';
+import subscriptions from './subscriptions';
 
+export default utils => ({
+  graphql: graphql(utils),
+  subscriptions: subscriptions(utils),
+});

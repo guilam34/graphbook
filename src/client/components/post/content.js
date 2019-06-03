@@ -1,2 +1,6 @@
-import React from "react";
-export default ({ post }) => <p className="content">{post.text}</p>;
+import React from 'react';
+
+export default ({post}) => 
+    <p className="content">
+        {post.text}
+    </p>

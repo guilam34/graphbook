@@ -1,33 +1,31 @@
 'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Messages', {
+    return queryInterface.createTable('users_chats', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      text: {
-        type: Sequelize.STRING
-      },
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Users",
-          key: "id"
+          model: 'Users',
+          key: 'id'
         },
-        onDelete: "SET NULL",
-        onUpdate: "cascade"
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
       },
       chatId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Chats",
-          key: "id"
+          model: 'Chats',
+          key: 'id'
         },
-        onDelete: "cascade",
-        onUpdate: "cascade"
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +38,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Messages');
+    return queryInterface.dropTable('users_chats');
   }
 };
